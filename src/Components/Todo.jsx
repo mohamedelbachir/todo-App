@@ -301,7 +301,7 @@ class Todo extends Component {
             ref={this.input}
           />
         </InputField>
-        <TodoList listTodo={this.state.todos} filter={filter} todos={todos} onChangeTaskState={this.changeTaskState.bind(this)} onChangeTaskTitle={this.changeTaskTitle.bind(this)} onDeleteTask={this.deleteTask.bind(this)} onClearCompleteTask={this.clearCompleteTodos}/>
+        <TodoList listTodo={this.state.todos} filter={filter} todos={todos} onChangeTaskState={this.changeTaskState.bind(this)} onChangeTaskTitle={this.changeTaskTitle.bind(this)} onDeleteTask={this.deleteTask.bind(this)} onClearCompleteTask={this.clearCompleteTodos} setTodos={this.setState.bind(this)}/>
         {this.state.todos.length > 0 && (
           <FilterField theme={themeState}>
             <ul className="filter-link" ref={this.filterLinks}>

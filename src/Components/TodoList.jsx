@@ -1,7 +1,8 @@
-import React,{useContext} from 'react'
+import React, { useContext} from "react";
 import { styled } from "styled-components";
 import { ThemeContext } from "../context/themeContext";
-
+import { ReactSortable } from "react-sortablejs";
+import Icon from "../icons/icons";
 const Label = styled.div`
   opacity: 0.5;
 `;
@@ -15,7 +16,7 @@ export const InputField = styled.div`
   width: -webkit-fill-available;
   display: flex;
   align-items: center;
-  padding: 5px 0 5px 15px;
+  padding: 5px 0 5px ${(props) => (props.toDoInstance ? "25px" : "0px")};
   transition: inherit;
   background-color: ${(props) =>
     props.theme === "dark" ? "var(--input-bg-dark)" : "var(--input-bg-light)"};
@@ -53,14 +54,20 @@ export const InputField = styled.div`
     transform: scale(0.8);
     cursor: pointer;
   }
-  `;
-  
-  const InfoField = styled(InputField)`
-    justify-content: ${($props) => ($props.center ? "center" : "space-between")};
-    padding-right: 5px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-  `;
+  .draggerTodo{
+    width:30px;
+    height:30px;
+    fill: ${props=>`var(--text-color-${props.theme})`};
+  }
+`;
+
+const InfoField = styled(InputField)`
+  justify-content: ${($props) => ($props.center ? "center" : "space-between")};
+  padding-right: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+`;
 
 const TodoListContainer = styled.div`
   padding: 0;
@@ -85,12 +92,32 @@ const TodoListContainer = styled.div`
   }
 `;
 
-function TodoList({ listTodo,todos, filter, onChangeTaskState, onChangeTaskTitle, onDeleteTask,onClearCompleteTask }) {
-  const {themeState}=useContext(ThemeContext);
+function TodoList({
+  listTodo,
+  todos,
+  filter,
+  onChangeTaskState,
+  onChangeTaskTitle,
+  onDeleteTask,
+  onClearCompleteTask,
+  setTodos
+}) {
+  const { themeState } = useContext(ThemeContext);
   return (
     <TodoListContainer theme={themeState}>
-      {todos.map((todo, index) => (
-        <InputField theme={themeState} key={index}>
+      <ReactSortable
+        // here they are!
+        group="todosList"
+        animation={100}
+        delayOnTouchStart={true}
+        delay={2}
+        list={todos}
+        setList={(newState)=>setTodos({todos:[...new Set([...newState,...listTodo])]})}
+        handle=".draggerTodo"
+      >
+      {todos.map((todo) => (
+        <InputField theme={themeState} key={todo.id}>
+          <Icon className='draggerTodo' name="dragIcon"/>
           <label class="ctn-check">
             <input
               type="checkbox"
@@ -100,7 +127,7 @@ function TodoList({ listTodo,todos, filter, onChangeTaskState, onChangeTaskTitle
               onChange={(e) => {
                 onChangeTaskState(e, todo.id);
               }}
-            />
+              />
             <span class="checkmark"></span>
           </label>
           <input
@@ -124,36 +151,33 @@ function TodoList({ listTodo,todos, filter, onChangeTaskState, onChangeTaskTitle
               fill="#494C6B"
               fillRule="evenodd"
               d="M16.97 0l.708.707L9.546 8.84l8.132 8.132-.707.707-8.132-8.132-8.132 8.132L0 16.97l8.132-8.132L0 .707.707 0 8.84 8.132 16.971 0z"
-            />
+              />
           </svg>
         </InputField>
       ))}
-      {listTodo.length !== 0 &&
-      todos.length === 0 &&
-        filter !== "all" && (
-          <InfoField theme={themeState} center={true}>
-            <Label>no {filter} task Left</Label>
-          </InfoField>
-        )}
+      </ReactSortable>
+      {listTodo.length !== 0 && todos.length === 0 && filter !== "all" && (
+        <InfoField theme={themeState} center={true}>
+          <Label>no {filter} task Left</Label>
+        </InfoField>
+      )}
       {todos.length > 0 && (
         <InfoField theme={themeState}>
           <Label>
             {filter !== "complete"
               ? todos.filter((todo) => {
-                return !todo.isTaskDone;
-              }).length
+                  return !todo.isTaskDone;
+                }).length
               : todos.length}{" "}
-            todo(s) {filter === "all" ? "left" :filter}
+            todo(s) {filter === "all" ? "left" : filter}
           </Label>
           {filter !== "active" && (
-            <Button onClick={onClearCompleteTask}>
-              Clear Completed
-            </Button>
+            <Button onClick={onClearCompleteTask}>Clear Completed</Button>
           )}
         </InfoField>
       )}
     </TodoListContainer>
-  )
+  );
 }
 
-export default TodoList
+export default TodoList;
