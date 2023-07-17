@@ -41,7 +41,7 @@ const HeaderContainer=styled.div`
   align-items: center;
   margin: auto;
   @media screen and (max-width:500px){
-    --max-contain-size: 95%;
+    --max-contain-size: 90%;
   }
 `
 export default function Header() {

@@ -30,6 +30,11 @@ export const InputField = styled.div`
     props.toDoInstance
       ? "none"
       : `1px solid var(--text-color-strike-${props.theme})`};
+  ${(props) => (props.toDoInstance && `form {
+    display:flex;
+    align-items:center;
+    width:-webkit-fill-available;
+  }`)};
   & input[type="text"] {
     padding: 14px 5px 10px 5px;
     width: -webkit-fill-available;
@@ -38,6 +43,10 @@ export const InputField = styled.div`
     border: none;
     color: inherit;
   }
+  & input[type="text"]:-internal-autofill-selected{
+    background:transparent;
+  }
+
   & input[type="text"].checked {
     text-decoration: line-through;
   }

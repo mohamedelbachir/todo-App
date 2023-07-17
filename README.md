@@ -11,9 +11,6 @@ This is a solution to the [Todo app challenge on Frontend Mentor](https://www.fr
   - [What I learned](#what-i-learned)
 - [Author](#author)
 - [Acknowledgments](#acknowledgments)
-
-**Note: Delete this note and update the table of contents based on what sections you keep.**
-
 ## Overview
 
 ### The challenge
@@ -38,21 +35,21 @@ Users should be able to:
 - Semantic HTML5 markup
 - CSS custom properties
 - Flexbox
-- CSS Grid
 - Mobile-first workflow
 - [React](https://reactjs.org/) - React framework
 - [Styled Components](https://styled-components.com/) - For styles
 
 ### What I learned
-
+- [Styled Components](https://styled-components.com/) - For styles
+- **SortableJS**
 ### Useful resources
 
 
 ## Author
 
-- Website - [Add your name here](https://www.your-site.com)
-- Frontend Mentor - [@yourusername](https://www.frontendmentor.io/profile/yourusername)
-- Twitter - [@yourusername](https://www.twitter.com/yourusername)
+- Github - [mohamed](https://github.com/mohamedelbachir)
+- Frontend Mentor - [@mohamedelbachir](https://www.frontendmentor.io/profile/@mohamedelbachir)
+- Twitter - [mohamed_el_bachir](https://twitter.com/Mohamed_El_BN)
 
 ## Acknowledgments
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -85,8 +82,6 @@ Your app is ready to be deployed!
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
 ### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
 If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 

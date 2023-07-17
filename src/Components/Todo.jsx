@@ -12,7 +12,7 @@ const Container = styled.div`
     width: fit-content;
   }
   @media screen and (max-width: 500px) {
-    --max-contain-size: 95%;
+    --max-contain-size: 90%;
   }
 `;
 
@@ -48,6 +48,20 @@ const FilterField = styled(InputField)`
     color: var(--link-hover);
   }
 `;
+
+const Info = styled.div`
+  margin-top: 30px;
+  text-align: center;
+  opacity: 0.7;
+  .attribution{
+    margin-top: 20px;
+  }
+  a{
+    text-decoration: none;
+    color:var(--link-color-active)
+  }
+`;
+
 async function saveToLocalStorage(dataName, data) {
   await window.setTimeout(() => {
     localStorage.setItem(dataName, JSON.stringify(data));
@@ -75,7 +89,7 @@ function arraysEqual(arr1, arr2) {
   return true;
 }
 
-function findTaskById(id,todos) {
+function findTaskById(id, todos) {
   const [...ListTodo] = todos;
   const index = ListTodo.findIndex((todo) => {
     return todo.id === id;
@@ -101,7 +115,8 @@ class Todo extends Component {
     this.createTask = this.createTask.bind(this);
     this.clearCompleteTodos = this.clearCompleteTodos.bind(this);
     this.handleFilter = this.handleFilter.bind(this);
-    this.changeTaskTitle=this.changeTaskTitle.bind(this)
+    this.changeTaskTitle = this.changeTaskTitle.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
   componentDidMount() {
     this.setState({
@@ -140,52 +155,49 @@ class Todo extends Component {
     });
   }
 
-  createTask(e, isTaskDone = false) {
-    if (e.key === "Enter") {
-      if (this.input.current.value === "") {
-        return;
-      }
-      const [...ListTodo] = this.state.todos;
-      if (ListTodo.length < 1) {
-        ListTodo.push({
-          id: 0,
-          isTaskDone: isTaskDone,
-          taskTile: this.input.current.value,
-        });
-      } else {
-        let maxId = 0;
-        ListTodo.forEach((todo) => {
-          if (todo.id > maxId) {
-            maxId = todo.id;
-          }
-        });
-        ListTodo.unshift({
-          id: maxId + 1,
-          isTaskDone: isTaskDone,
-          taskTile: this.input.current.value,
-        });
-      }
-      this.setState((state) => {
-        return {
-          todos: ListTodo,
-        };
-      });
-      this.setState({
-        newTodo: "",
-        stateNewTodo: false,
-      });
-      if (this.state.filter !== "all") {
-        this.setState({
-          filter: this.state.stateNewTodo ? "complete" : "active",
-        });
-      }
-      saveToLocalStorage("todos", this.state.todos);
+  createTask(isTaskDone = false) {
+    const [...ListTodo] = this.state.todos;
+    if (this.input.current.value === "") {
+      return;
     }
+    if (ListTodo.length < 1) {
+      ListTodo.push({
+        id: 0,
+        isTaskDone: isTaskDone,
+        taskTile: this.input.current.value,
+      });
+    } else {
+      let maxId = 0;
+      ListTodo.forEach((todo) => {
+        if (todo.id > maxId) {
+          maxId = todo.id;
+        }
+      });
+      ListTodo.unshift({
+        id: maxId + 1,
+        isTaskDone: isTaskDone,
+        taskTile: this.input.current.value,
+      });
+    }
+    this.setState((state) => {
+      return {
+        todos: ListTodo,
+      };
+    });
+    this.setState({
+      newTodo: "",
+      stateNewTodo: false,
+    });
+    if (this.state.filter !== "all") {
+      this.setState({
+        filter: this.state.stateNewTodo ? "complete" : "active",
+      });
+    }
+    saveToLocalStorage("todos", this.state.todos);
   }
 
-
   changeTaskTitle(e, id) {
-    const [ListTodo, index] = findTaskById(id,this.state.todos);
+    const [ListTodo, index] = findTaskById(id, this.state.todos);
     ListTodo[index] = {
       ...ListTodo[index],
       taskTile: e.target.value,
@@ -213,9 +225,9 @@ class Todo extends Component {
   }
 
   changeTaskState(e, id) {
-    console.log(id,e.target.checked)
-    const [ListTodo, index] = findTaskById(id,this.state.todos);
-    
+    console.log(id, e.target.checked);
+    const [ListTodo, index] = findTaskById(id, this.state.todos);
+
     ListTodo[index] = {
       ...ListTodo[index],
       isTaskDone: e.target.checked,
@@ -229,7 +241,7 @@ class Todo extends Component {
   }
 
   deleteTask(e, id) {
-    const [ListTodo, index] = findTaskById(id,this.state.todos);
+    const [ListTodo, index] = findTaskById(id, this.state.todos);
     this.setState((state) => {
       return {
         todos: ListTodo.filter((todo) => {
@@ -256,7 +268,10 @@ class Todo extends Component {
       [name]: value,
     });
   }
-
+  handleSubmit(e) {
+    e.preventDefault();
+    this.createTask(e.target["stateNewTodo"].checked);
+  }
   render() {
     let { todos, filter, stateNewTodo, newTodo } = this.state;
     switch (filter) {
@@ -279,29 +294,37 @@ class Todo extends Component {
     return (
       <Container>
         <InputField theme={themeState} toDoInstance>
-          <label class="ctn-check">
+          <form action="" method="post" onSubmit={this.handleSubmit}>
+            <label class="ctn-check">
+              <input
+                type="checkbox"
+                name="stateNewTodo"
+                id="checkIdTask"
+                checked={stateNewTodo}
+                onChange={this.handleChange}
+              />
+              <span class="checkmark"></span>
+            </label>
             <input
-              type="checkbox"
-              name="stateNewTodo"
-              id="checkIdTask"
-              checked={stateNewTodo}
+              type="text"
+              name="newTodo"
+              placeholder="Create a new todo"
+              value={newTodo}
               onChange={this.handleChange}
+              ref={this.input}
             />
-            <span class="checkmark"></span>
-          </label>
-          <input
-            type="text"
-            name="newTodo"
-            placeholder="Create a new todo"
-            value={newTodo}
-            onChange={this.handleChange}
-            onKeyUp={(e) => {
-              this.createTask(e, stateNewTodo);
-            }}
-            ref={this.input}
-          />
+          </form>
         </InputField>
-        <TodoList listTodo={this.state.todos} filter={filter} todos={todos} onChangeTaskState={this.changeTaskState.bind(this)} onChangeTaskTitle={this.changeTaskTitle.bind(this)} onDeleteTask={this.deleteTask.bind(this)} onClearCompleteTask={this.clearCompleteTodos} setTodos={this.setState.bind(this)}/>
+        <TodoList
+          listTodo={this.state.todos}
+          filter={filter}
+          todos={todos}
+          onChangeTaskState={this.changeTaskState.bind(this)}
+          onChangeTaskTitle={this.changeTaskTitle.bind(this)}
+          onDeleteTask={this.deleteTask.bind(this)}
+          onClearCompleteTask={this.clearCompleteTodos}
+          setTodos={this.setState.bind(this)}
+        />
         {this.state.todos.length > 0 && (
           <FilterField theme={themeState}>
             <ul className="filter-link" ref={this.filterLinks}>
@@ -334,6 +357,22 @@ class Todo extends Component {
               </li>
             </ul>
           </FilterField>
+        )}
+        {todos.length > 0 && (
+          <Info>
+            <span>Drag and Drop to Reorder list</span>
+            <div class="attribution">
+              Challenge by{" "}
+              <a
+                href="https://www.frontendmentor.io?ref=challenge"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Frontend Mentor
+              </a>
+              . Coded by <a href="https://github.com/mohamedelbachir" target="_blank" rel="noreferrer">Mohamed</a>.
+            </div>
+          </Info>
         )}
       </Container>
     );
